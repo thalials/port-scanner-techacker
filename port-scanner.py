@@ -3,25 +3,22 @@ import time
 
 # fonte: https://docs.python.org/3/library/socket.html
 
-def main(IP, initial_port, final_port):
+def main(IP, initial_port, final_port, protocol):
     has_ports = False
     start = time.time()
 
-    print(f"\nStarting connection to ({IP})\n")
+    print(f"\nStarting connection to ({IP})")
 
     for PORT in range(initial_port, final_port):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
                 if s.connect_ex((IP, PORT)) == 0:
-                    has_ports = True
-                    SERVICE = socket.getservbyport(PORT)
-                    # PROTOCOL = socket.getprotobyname("udp")
-                    # if PROTOCOL == 6:
-                    #     print("TCP")
-                    # elif PROTOCOL == 17:
-                    #     print("UDP")
-
-                    print(f"PORT: {PORT} / RUNNING SERVICE: {SERVICE}")
+                    try:
+                        SERVICE = socket.getservbyport(PORT, protocol)
+                        print(f"\nPORT: {PORT} / PROTOCOL: {protocol} / RUNNING SERVICE: {SERVICE}")
+                        has_ports = True
+                    except:
+                        continue
             except OSError:
                 continue
 
@@ -37,8 +34,10 @@ def main(IP, initial_port, final_port):
 
 if __name__ == "__main__":
     IP = input("target's ID address: ")
+    protocol = input("Type of protocol (udp or tcp) that you want to search: ")
+
     initial_port = int(input("Initial port: "))
     final_port = int(input("Final port: "))
 
-    main(IP, initial_port, final_port)
+    main(IP, initial_port, final_port, protocol)
 		
